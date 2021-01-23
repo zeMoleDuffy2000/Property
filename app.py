@@ -13,6 +13,7 @@ from HistoricalHousePrice import HistoricalHousePrice
 from matplotlib import pyplot as plt
 from matplotlib import style
 from datetime import datetime
+import numpy as np
 import pandas as pd
 import inspect
 import time
@@ -51,8 +52,8 @@ driver = webdriver.Chrome(PATH)
 driver.get("https://landregistry.data.gov.uk/app/ppd")
 # #
 search = driver.find_element_by_id("street")
-street = "Toftwood Road"
-search.send_keys("Toftwood Road")
+street = "tavistock road"
+search.send_keys(street)
 
 search = driver.find_element_by_id("town")
 search.send_keys("sheffield")
@@ -201,11 +202,10 @@ try:
         j = 1920
         while j < 2021:
             currentHousePriceList[j] = 0
-            # float('nan')
+                # float('nan')
             # strOutput = "currentHousePriceList {} = {}"
             # print(strOutput.format(j, currentHousePriceList[j]))
             j += 1
-
 
         # print(currentHousePriceList)
 
@@ -259,21 +259,20 @@ try:
         except:
             print("no legend")
 
-        count += 1
+        # count += 1
+        #
+        # if count == 2:
+        #     print("breaking")
+        #     break
 
-        if count == 2:
-            print("breaking")
-            break
-
-    # plt.plot(datePlot, pricePlot, marker='.')
-    # datePlot.clear()
-    # pricePlot.clear()
-        time.sleep(5)
+        # plt.plot(datePlot, pricePlot, marker='.')
+        # datePlot.clear()
+        # pricePlot.clear()
+        time.sleep(12)
 except:
     print("something went wrong")
 
 finally:
-
 
     print("printing DF")
     pd.set_option("display.max_rows", None, "display.max_columns", None)
@@ -286,10 +285,11 @@ finally:
     style.use('dark_background')
 
     i = 0
-    numberOfCols =len(df.columns)
+    numberOfCols = len(df.columns)
     formattedhouseDates = df['Year'].tolist()
     print("formattedhouseDates")
     print(formattedhouseDates)
+    npDates = np.array(formattedhouseDates)
 
     while i < numberOfCols:
         if i != 0:
@@ -299,26 +299,34 @@ finally:
 
             formattedHousePricesList = df.iloc[:, i].tolist()
             floatFormattedHousePrice = [float(item) for item in formattedHousePricesList]
-            print("formattedHousePricesSeries")
+            print("floatFormattedHousePrice before na")
             print(floatFormattedHousePrice)
             print(type(floatFormattedHousePrice))
 
-            for item in floatFormattedHousePrice :
-                if floatFormattedHousePrice[item] == 0:
-                    floatFormattedHousePrice[item] = float('nan')
+            # i = 0
+            # while i < len(floatFormattedHousePrice):
+            #     if floatFormattedHousePrice[i] == 0.0:
+            #         floatFormattedHousePrice[i] = None
+            #     i += 1
 
-            plt.plot(formattedhouseDates, floatFormattedHousePrice)
+            # for item in floatFormattedHousePrice :
+            #     if floatFormattedHousePrice[item] == 0.0:
+            #         floatFormattedHousePrice[item] = float('nan')
+            series1 = np.array(floatFormattedHousePrice).astype(np.double)
+            print("series1")
+            print(series1)
+            mask = series1 > 0.0
+            plt.plot(npDates[mask], series1[mask], linestyle='-', marker='o')
+            print("floatFormattedHousePrice after na")
+            print(floatFormattedHousePrice)
 
-
-
-        i +=1
+        i += 1
 
     # plt.gca().invert_yaxis()
-    # plt.legend(houseLegend)
+    plt.legend(houseLegend)
     print("<tranhistory/>")
     plt.gcf().autofmt_xdate()
     plt.show()
-
 
 # try:
 #     priceResult = driver.find_element_by_xpath("//main/div[2]/div[2]/div[1]/div[1]").text
