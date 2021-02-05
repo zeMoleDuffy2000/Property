@@ -21,23 +21,24 @@ import time
 import sqlite3
 import re
 
-conn = sqlite3.connect('property.db')
-c = conn.cursor()
 
-try:
-    c.execute("""CREATE TABLE houses (
-                address1 text,
-                address2 text,
-                desc text,
-                link text,
-                price integer,
-                propertyType text,
-                bedroomNo integer,
-                bathroomNo integer,
-                tenure text
-                )""")
-except Exception:
-    print("houses table already exists")
+
+# c = conn.cursor()
+#
+# try:
+#     c.execute("""CREATE TABLE houses (
+#                 address1 text,
+#                 address2 text,
+#                 desc text,
+#                 link text,
+#                 price integer,
+#                 propertyType text,
+#                 bedroomNo integer,
+#                 bathroomNo integer,
+#                 tenure text
+#                 )""")
+# except Exception:
+#     print("houses table already exists")
 
 # c.execute("INSERT INTO houses VALUES('Sharrow Lane, Sharrow', '5 bedroom detached house for sale', 150000, 'detached', 5, 1, 'Freehold')")
 
@@ -52,7 +53,7 @@ driver = webdriver.Chrome(PATH)
 driver.get("https://landregistry.data.gov.uk/app/ppd")
 # #
 search = driver.find_element_by_id("street")
-street = "Burns Road"
+street = "Archer Road"
 search.send_keys(street)
 
 search = driver.find_element_by_id("district")
@@ -62,6 +63,8 @@ search.send_keys(district)
 search = driver.find_element_by_id("town")
 search.send_keys("sheffield")
 search.send_keys(Keys.RETURN)
+
+conn = sqlite3.connect('{}.db'.format(street))
 
 # date_time_str = '2018-06-29 08:15:27.243860'
 #
@@ -272,7 +275,7 @@ try:
         # plt.plot(datePlot, pricePlot, marker='.')
         # datePlot.clear()
         # pricePlot.clear()
-        time.sleep(30)
+        time.sleep(45)
 except:
     print("something went wrong")
 
@@ -281,6 +284,9 @@ finally:
     print("printing DF")
     pd.set_option("display.max_rows", None, "display.max_columns", None)
     print(df)
+
+    print("Storing DF into Database")
+    df.to_sql(street, conn)
 
     plt.title(street)
 

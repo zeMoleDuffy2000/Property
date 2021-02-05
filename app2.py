@@ -9,27 +9,28 @@ from selenium.webdriver.support import expected_conditions as EC
 from selenium.webdriver.common.action_chains import ActionChains
 from PropertyData import Property
 
-import sqlite3
+import sqlite3 as sql
 import re
 
 
-conn = sqlite3.connect('property.db')
-c = conn.cursor()
+conn = sql.connect('property.db')
 
-try :
-    c.execute("""CREATE TABLE houses (
-                address1 text,
-                address2 text,
-                desc text,
-                link text,
-                price integer,
-                propertyType text,
-                bedroomNo integer,
-                bathroomNo integer,
-                tenure text
-                )""")
-except Exception:
-    print("houses table already exists")
+# c = conn.cursor()
+
+# try :
+#     c.execute("""CREATE TABLE houses (
+#                 address1 text,
+#                 address2 text,
+#                 desc text,
+#                 link text,
+#                 price integer,
+#                 propertyType text,
+#                 bedroomNo integer,
+#                 bathroomNo integer,
+#                 tenure text
+#                 )""")
+# except Exception:
+#     print("houses table already exists")
 
 # c.execute("INSERT INTO houses VALUES('Sharrow Lane, Sharrow', '5 bedroom detached house for sale', 150000, 'detached', 5, 1, 'Freehold')")
 
